@@ -1,52 +1,56 @@
 package vn.ITSS.teacherexchange.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
+import vn.ITSS.teacherexchange.util.constant.GenderEnum;
+import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
+
+    @NotBlank(message = "email không được để trống")
     private String email;
+
+    @NotBlank(message = "password không được để trống")
     private String password;
 
-    public String getName() {
-        return name;
-    }
+    private int age;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    @Enumerated(EnumType.STRING)
+    private GenderEnum gender;
 
-    public String getEmail() {
-        return email;
-    }
+    private String address;
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    private Instant createdAt;
+    private Instant updatedAt;
+    private String createdBy;
+    private String updatedBy;
 
-    public String getPassword() {
-        return password;
-    }
+    @ManyToOne
+    @JoinColumn(name = "school_id")
+    private School school;
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "resume_id", referencedColumnName = "id")
+    private Resume resume;
 
-    public long getId() {
-        return id;
-    }
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<Criteria> criterias;
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 }
