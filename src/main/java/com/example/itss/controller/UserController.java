@@ -5,7 +5,6 @@ import com.example.itss.domain.dto.response.ResponseDto;
 import com.example.itss.domain.dto.response.ResultPaginationDto;
 import com.example.itss.domain.model.User;
 import com.example.itss.service.UserService;
-import com.example.itss.util.error.FomatException;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
@@ -26,9 +25,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto<User>> createUse(@Valid @RequestBody User user) {
-        ResponseDto<User> response = userService.createUser(user);
-        return ResponseEntity.status(response.getStatus()).body(response);
+    public ResponseEntity<ResponseDto<ResUserDto>> createUse(@Valid @RequestBody User user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }
 
     @GetMapping("getAll")
@@ -41,7 +39,6 @@ public class UserController {
     public ResponseEntity<ResponseDto<ResultPaginationDto>> getUserPagination(
             @Filter Specification<User> spec,
             Pageable pageable) {
-
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.getAllUsersPagination(spec, pageable));
     }
 

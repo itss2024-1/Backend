@@ -26,14 +26,16 @@ public class UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    public ResponseDto<User>  createUser(User user) throws FomatException {
+    public ResponseDto<ResUserDto>  createUser(User user) throws FomatException {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new FomatException("Email đã tốn tại");
         }
         String hashPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPass);
         User savedUser = userRepository.save(user);
-        return new ResponseDto<>(201, "Tạo tài khoản thành công", savedUser);
+
+        ResUserDto resUserDto = this.convertToResUserDto(savedUser);
+        return new ResponseDto<>(201, "Tạo tài khoản thành công", resUserDto);
     }
 
     public ResponseDto<List<ResUserDto>> getAllUsers() {
@@ -77,7 +79,7 @@ public class UserService {
     public ResponseDto<ResUpdateUserDto> updateUser(ResUserDto user) throws FomatException{
         Optional<User> optional = this.userRepository.findByEmail(user.getEmail());
         User currUser = optional.get();
-        if (currUser != null) {
+        if (null != currUser) {
             currUser.setAddress(user.getAddress());
             currUser.setGender(user.getGender());
             currUser.setAge(user.getAge());
@@ -94,12 +96,16 @@ public class UserService {
 
     public ResponseDto<Void> deleteUser(String email) throws FomatException{
         Optional<User> optional = this.userRepository.findByEmail(email);
-        User currUser = optional.get();
         if(!optional.isPresent()) {
             throw new FomatException("Không tồn tại người dùng");
         }
         this.userRepository.delete(optional.get());
         return new ResponseDto<>(204, "Xoá người dùng", null);
+    }
+
+    public User handleGetUserByEmail(String email) {
+        Optional<User> optional = this.userRepository.findByEmail(email);
+        return optional.get();
     }
 
     public User handleGetUserByUsername(String email) {
