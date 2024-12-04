@@ -1,4 +1,4 @@
-package com.example.itss.domain.dto.response;
+package com.example.itss.domain.response;
 
 import lombok.Getter;
 import lombok.Setter;

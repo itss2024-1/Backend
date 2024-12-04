@@ -1,19 +1,23 @@
-package com.example.itss.domain.dto.response.user;
+package com.example.itss.domain.response.user;
 
-import com.example.itss.util.constant.GenderEnum;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ResUserDto {
-    private Integer id;
+    private long id;
     private String name;
     private String email;
     private int age;
-    private GenderEnum gender;
     private String address;
+    private String phone;
+    private Instant createdAt;
     private Instant updatedAt;
 }
