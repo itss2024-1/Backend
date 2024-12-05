@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto<ResUserDto>> createUse(@Valid @RequestBody User user) {
+    public ResponseEntity<ResponseDto<ResUserDto>> createUse(@Valid @RequestBody User user) throws ValidInforException {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }
 

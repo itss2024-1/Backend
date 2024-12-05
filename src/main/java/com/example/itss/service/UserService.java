@@ -10,6 +10,7 @@ import com.example.itss.util.error.ValidInforException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,17 +20,19 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseDto<ResUserDto> createUser(User user) {
-        // if (userRepository.existsByEmail(user.getEmail())) {
-        // throw new FomatException("Email đã tốn tại");
-        // }
-        // String hashPass = passwordEncoder.encode(user.getPassword());
-        // user.setPassword(hashPass);
+    public ResponseDto<ResUserDto> createUser(User user) throws ValidInforException {
+         if (userRepository.existsByEmail(user.getEmail())) {
+         throw new ValidInforException("Email đã tốn tại");
+         }
+         String hashPass = passwordEncoder.encode(user.getPassword());
+         user.setPassword(hashPass);
         User savedUser = userRepository.save(user);
 
         ResUserDto resUserDto = this.convertToResUserDto(savedUser);
@@ -100,13 +103,15 @@ public class UserService {
         return null;
     }
 
-    public ResUserDto handleGetUserByUsername(String username) {
+    public User handleGetUserByUsername(String username) throws ValidInforException{
         Optional<User> optional = this.userRepository.findByEmail(username);
         if (optional.isPresent()) {
-            ResUserDto resUserDto = convertToResUserDto(optional.get());
-            return resUserDto;
+//            ResUserDto resUserDto = convertToResUserDto(optional.get());
+            return optional.get();
         }
-        return null;
+        else  {
+            throw new ValidInforException("Username/password không hợp lệ");
+        }
     }
 
     public boolean isEmailExist(String email) {
