@@ -37,6 +37,26 @@ public class ResLoginDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class UserGetInfores {
+        private AccountGetInfores user;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class AccountGetInfores {
+        private long id;
+        private String email;
+        private String name;
+        private String phone;
+        private String avatar;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class UserInsideToken {
         private long id;
         private String email;

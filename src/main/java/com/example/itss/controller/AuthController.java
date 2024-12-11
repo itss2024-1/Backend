@@ -9,18 +9,13 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 
 import com.example.itss.domain.request.ReqLoginDTO;
 import com.example.itss.domain.response.ResLoginDto;
-import com.example.itss.domain.response.user.ResUserDto;
 import com.example.itss.service.UserService;
 import com.example.itss.util.SecurityUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -88,23 +83,25 @@ public class AuthController {
         }
 
         @GetMapping("/auth/account")
-        public ResponseEntity<ResLoginDto.UserGetAccount> getAccount() throws ValidInforException {
+        public ResponseEntity<ResLoginDto.UserGetInfores> getAccount() throws ValidInforException {
                 String email = SecurityUtil.getCurrentUserLogin().isPresent()
                         ? SecurityUtil.getCurrentUserLogin().get()
                         : "";
 
                 User currentUserDB = this.userService.handleGetUserByUsername(email);
-                ResLoginDto.UserLogin userLogin = new ResLoginDto.UserLogin();
-                ResLoginDto.UserGetAccount userGetAccount = new ResLoginDto.UserGetAccount();
+                ResLoginDto.AccountGetInfores accountGetInfores = new ResLoginDto.AccountGetInfores();
+                ResLoginDto.UserGetInfores userGetInfores = new ResLoginDto.UserGetInfores();
 
                 if (currentUserDB != null) {
-                        userLogin.setId(currentUserDB.getId());
-                        userLogin.setEmail(currentUserDB.getEmail());
-                        userLogin.setName(currentUserDB.getName());
+                        accountGetInfores.setId(currentUserDB.getId());
+                        accountGetInfores.setEmail(currentUserDB.getEmail());
+                        accountGetInfores.setName(currentUserDB.getName());
+                        accountGetInfores.setAvatar(currentUserDB.getAvatar());
+                        accountGetInfores.setPhone(currentUserDB.getPhone());
 //                       userLogin.setRole(currentUserDB.getRole());
-                        userGetAccount.setUser(userLogin);
+                        userGetInfores.setUser(accountGetInfores);
                 }
 
-                return ResponseEntity.ok().body(userGetAccount);
+                return ResponseEntity.ok().body(userGetInfores);
         }
 }

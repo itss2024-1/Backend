@@ -1,7 +1,8 @@
 package com.example.itss.domain;
 
 import com.example.itss.util.SecurityUtil;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.itss.util.constant.ResumeStatusEnum;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -11,36 +12,32 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "resumes")
 @Getter
 @Setter
-public class User {
+public class Resume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
+    private String images;
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String description;
 
-    @NotBlank(message = "email không được để trống")
-    private String email;
+    @JsonProperty("status")
+    private ResumeStatusEnum status = ResumeStatusEnum.PUBLIC;;
 
-    @NotBlank(message = "password không được để trống")
-    private String password;
-
-    private int age;
-    private String address;
-    private String phone;
-    private String avatar;
+    private String jobTitle;
 
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
 
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @JsonIgnore
-    List<Resume> resumes;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @PrePersist
     public void handleBeforeCreate() {
@@ -59,4 +56,5 @@ public class User {
 
         this.updatedAt = Instant.now();
     }
+
 }

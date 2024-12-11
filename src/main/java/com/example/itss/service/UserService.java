@@ -45,22 +45,14 @@ public class UserService {
         ResultPaginationDto resultPaginationDto = new ResultPaginationDto();
         ResultPaginationDto.Meta meta = new ResultPaginationDto.Meta();
 
-        List<ResUserDto> listUsers = page.getContent()
-                .stream().map(item -> new ResUserDto(
-                        item.getId(),
-                        item.getName(),
-                        item.getEmail(),
-                        item.getAge(),
-                        item.getAddress(),
-                        item.getPhone(),
-                        item.getCreatedAt(),
-                        item.getUpdatedAt()))
-                .collect(Collectors.toList());
-
         meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
         meta.setPages(page.getTotalPages());
         meta.setTotal((int) page.getTotalElements());
+
+        List<ResUserDto> listUsers = page.getContent()
+                .stream().map(item -> this.convertToResUserDto(item))
+                .collect(Collectors.toList());
 
         resultPaginationDto.setResult(listUsers);
         resultPaginationDto.setMeta(meta);
@@ -82,9 +74,9 @@ public class UserService {
         if (optional.isPresent()) {
             User currUser = optional.get();
             currUser.setAddress(user.getAddress());
-            currUser.setAge(user.getAge());
             currUser.setName(user.getName());
-            currUser.setEmail(user.getEmail());
+            currUser.setPhone(user.getPhone());
+            currUser.setAvatar(user.getAvatar());
 
             currUser = this.userRepository.save(currUser);
             ResUserDto updateUserDto = convertToResUserDto(currUser);
@@ -124,6 +116,7 @@ public class UserService {
         res.setEmail(user.getEmail());
         res.setAddress(user.getAddress());
         res.setAge(user.getAge());
+        res.setAvatar(user.getAvatar());
         res.setName(user.getName());
         res.setPhone(user.getPhone());
         res.setCreatedAt(user.getCreatedAt());
