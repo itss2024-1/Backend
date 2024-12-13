@@ -9,6 +9,8 @@ import com.example.itss.domain.response.user.ResUserDto;
 import com.example.itss.repository.ResumeRepository;
 import com.example.itss.util.SecurityUtil;
 import com.example.itss.util.error.ValidInforException;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -40,6 +42,20 @@ public class ResumeService {
         ResResumeDto resResumeDto = this.convertToResResumeDto(newResume);
         return new ResponseDto<>(201, "Tạo tài khoản thành công", resResumeDto);
     }
+    public static Specification<Resume> withUserName(String userName) {
+        return (root, query, criteriaBuilder) -> {
+            if (userName == null || userName.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+
+            // Join the user relationship and compare the name
+            Join<Resume, User> userJoin = root.join("user", JoinType.INNER);
+            return criteriaBuilder.like(
+                    criteriaBuilder.lower(userJoin.get("name")),
+                    "%" + userName.toLowerCase() + "%"
+            );
+        };
+    }
 
     public ResponseDto<ResultPaginationDto> fetchAllResume(Specification<Resume> spec, Pageable pageable) {
         Page<Resume> pageResume = this.resumeRepository.findAll(spec, pageable);
@@ -61,6 +77,7 @@ public class ResumeService {
 
         return new ResponseDto<>(200, "Fetched all resumes", rs);
     }
+
 
     public ResponseDto<ResResumeDto> updateResume(Resume resume) throws ValidInforException {
         Optional<Resume> optionalResume = this.resumeRepository.findById(resume.getId());

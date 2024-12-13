@@ -31,9 +31,12 @@ public class ResumeController {
 
     @GetMapping("/all")
     public ResponseEntity<ResponseDto<ResultPaginationDto>> fetchAllResume(
+            @RequestParam(required = false) String userName,
             @Filter Specification<Resume> spec,
             Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.resumeService.fetchAllResume(spec, pageable));
+        Specification<Resume> combinedSpec = Specification.where(spec)
+                .and(resumeService.withUserName(userName));
+        return ResponseEntity.status(HttpStatus.OK).body(this.resumeService.fetchAllResume(combinedSpec, pageable));
     }
 
     @PutMapping
