@@ -1,6 +1,8 @@
 package com.example.itss.controller;
 
 import com.example.itss.domain.User;
+import com.example.itss.domain.response.ResponseDto;
+import com.example.itss.domain.response.user.ResUserDto;
 import com.example.itss.util.error.ValidInforException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -103,5 +105,11 @@ public class AuthController {
                 }
 
                 return ResponseEntity.ok().body(userGetInfores);
+        }
+
+        @PostMapping("/auth/register")
+        public ResponseEntity<ResponseDto<ResUserDto>> register(@Valid @RequestBody User user) throws ValidInforException {
+                ResponseDto<ResUserDto> newUser = userService.createUser(user);
+                return ResponseEntity.ok().body(newUser);
         }
 }
