@@ -4,6 +4,7 @@ import com.example.itss.domain.User;
 import com.example.itss.domain.response.ResponseDto;
 import com.example.itss.domain.response.user.ResUserDto;
 import com.example.itss.util.error.ValidInforException;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -111,5 +112,30 @@ public class AuthController {
         public ResponseEntity<ResponseDto<ResUserDto>> register(@Valid @RequestBody User user) throws ValidInforException {
                 ResponseDto<ResUserDto> newUser = userService.createUser(user);
                 return ResponseEntity.ok().body(newUser);
+        }
+
+        @PostMapping("/auth/logout")
+        public ResponseEntity<Void> logout() throws ValidInforException {
+                String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+
+                if (email.equals("")) {
+                        throw new ValidInforException("Access Token không hợp lệ");
+                }
+
+                // update refresh token = null
+//                this.userService.updateUserToken(null, email);
+
+                // remove refresh token cookie
+                ResponseCookie deleteSpringCookie = ResponseCookie
+                        .from("refresh_token", null)
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/")
+                        .maxAge(0)
+                        .build();
+
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.SET_COOKIE, deleteSpringCookie.toString())
+                        .body(null);
         }
 }

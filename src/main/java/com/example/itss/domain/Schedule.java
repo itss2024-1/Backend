@@ -1,50 +1,38 @@
 package com.example.itss.domain;
 
 import com.example.itss.util.SecurityUtil;
+import com.example.itss.util.constant.ScheduleStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "schedule")
 @Getter
 @Setter
-public class User {
+public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
-
-    @NotBlank(message = "email không được để trống")
-    private String email;
-
-    @NotBlank(message = "password không được để trống")
-    private String password;
-
-    private int age;
-    private String address;
+    private String description;
+    private String time;
     private String phone;
-    private String avatar;
-
+    private long inviteeId;
+    private String imageUrl;
+    private ScheduleStatusEnum status = ScheduleStatusEnum.PENDING;
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
 
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @JsonIgnore
-    List<Resume> resumes;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @JsonIgnore
-    List<Schedule> schedules;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @PrePersist
     public void handleBeforeCreate() {

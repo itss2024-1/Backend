@@ -1,9 +1,9 @@
 package com.example.itss.controller;
 
+import com.example.itss.domain.Schedule;
 import com.example.itss.service.EmailService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.mail.MessagingException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/email")
@@ -19,4 +19,15 @@ public class EmailController {
         this.emailService.sendSimpleEmail();
         return "Email sent successfully";
     }
+
+    @GetMapping("/schedule")
+    public String sendScheduleEmail( @RequestBody Schedule schedule) {
+        try {
+            emailService.sendScheduleEmail(schedule);
+            return "Email sent successfully";
+        } catch (MessagingException e) {
+            return "Failed to send email: " + e.getMessage();
+        }
+    }
+
 }

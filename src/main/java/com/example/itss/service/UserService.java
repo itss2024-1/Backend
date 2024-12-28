@@ -60,6 +60,16 @@ public class UserService {
         return new ResponseDto<>(200, "Tất cả người dùng", resultPaginationDto);
     }
 
+    public ResponseDto<ResUserDto> getUserById(Long id) throws ValidInforException {
+        Optional<User> optional = this.userRepository.findById(id);
+        if (optional.isPresent()) {
+            ResUserDto resUserDto = convertToResUserDto(optional.get());
+            return new ResponseDto<>(200, "Người dùng", resUserDto);
+        } else {
+            throw new ValidInforException("Không tồn tại người dùng");
+        }
+    }
+
     public ResponseDto<Void> deleteUser(Long id) throws ValidInforException {
         Optional<User> optional = this.userRepository.findById(id);
         if (!optional.isPresent()) {

@@ -31,6 +31,16 @@ public class ResumeController {
 
     @GetMapping("/all")
     public ResponseEntity<ResponseDto<ResultPaginationDto>> fetchAllResume(
+            @RequestParam(required = false) Long userId,
+            @Filter Specification<Resume> spec,
+            Pageable pageable) {
+        Specification<Resume> combinedSpec = Specification.where(spec)
+                .and(resumeService.withUserId(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(this.resumeService.fetchAllResume(combinedSpec, pageable));
+    }
+
+    @GetMapping("/all/username")
+    public ResponseEntity<ResponseDto<ResultPaginationDto>> fetchAllResumeByUserName(
             @RequestParam(required = false) String userName,
             @Filter Specification<Resume> spec,
             Pageable pageable) {
@@ -47,5 +57,10 @@ public class ResumeController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<ResResumeDto>> fetchResumeById(@PathVariable long id) throws ValidInforException {
         return ResponseEntity.status(HttpStatus.OK).body(this.resumeService.fetchResumeById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDto<Void>> fetchResumeByUserId(@PathVariable long id) throws ValidInforException{
+        return ResponseEntity.status(HttpStatus.OK).body(this.resumeService.deleteResumeById(id));
     }
 }

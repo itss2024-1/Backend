@@ -1,9 +1,14 @@
 package com.example.itss.service;
 
+import com.example.itss.domain.Schedule;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Service
@@ -24,5 +29,25 @@ public class EmailService {
         msg.setSubject("Testing from Spring Boot");
         msg.setText("Hello World from Spring Boot Email");
         this.mailSender.send(msg);
+    }
+
+
+    public void sendScheduleEmail(Schedule schedule) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("name", schedule.getName());
+        context.setVariable("phone", schedule.getPhone());
+        context.setVariable("description", schedule.getDescription());
+        context.setVariable("time", schedule.getTime());
+        context.setVariable("status", schedule.getStatus());
+
+        String process = templateEngine.process("scheduleEmailTemplate", context);
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+        helper.setTo("nguyendung30021109@gmail.com");
+        helper.setSubject("Schedule Notification");
+        helper.setText(process, true);
+
+        javaMailSender.send(mimeMessage);
     }
 }

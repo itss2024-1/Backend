@@ -5,7 +5,6 @@ import com.example.itss.domain.User;
 import com.example.itss.domain.response.ResponseDto;
 import com.example.itss.domain.response.ResultPaginationDto;
 import com.example.itss.domain.response.resume.ResResumeDto;
-import com.example.itss.domain.response.user.ResUserDto;
 import com.example.itss.repository.ResumeRepository;
 import com.example.itss.util.SecurityUtil;
 import com.example.itss.util.error.ValidInforException;
@@ -57,6 +56,15 @@ public class ResumeService {
         };
     }
 
+    public static Specification<Resume> withUserId(Long userId) {
+        return (root, query, criteriaBuilder) -> {
+            if (userId == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("user").get("id"), userId);
+        };
+    }
+
     public ResponseDto<ResultPaginationDto> fetchAllResume(Specification<Resume> spec, Pageable pageable) {
         Page<Resume> pageResume = this.resumeRepository.findAll(spec, pageable);
         ResultPaginationDto rs = new ResultPaginationDto();
@@ -91,6 +99,8 @@ public class ResumeService {
         currResume.setImages(resume.getImages());
         currResume.setDescription(resume.getDescription());
         currResume.setStatus(resume.getStatus());
+        currResume.setJobTitle(resume.getJobTitle());
+        currResume.setReward(resume.getReward());
 
         Resume newResume =  resumeRepository.save(currResume);
 
@@ -109,6 +119,16 @@ public class ResumeService {
         return new ResponseDto<>(200, "Fetched resume", resResumeDto);
     }
 
+    public ResponseDto<Void> deleteResumeById(long id) throws ValidInforException {
+        Optional<Resume> optionalResume = this.resumeRepository.findById(id);
+        if(optionalResume.isEmpty()) {
+            throw new ValidInforException("Resume not found");
+        }
+
+        this.resumeRepository.deleteById(id);
+        return new ResponseDto<>(204, "Xoá hồ sơ thành công", null);
+    }
+
     public ResResumeDto convertToResResumeDto(Resume resume) {
         ResResumeDto resResumeDto = new ResResumeDto();
         resResumeDto.setId(resume.getId());
@@ -117,6 +137,7 @@ public class ResumeService {
         resResumeDto.setDescription(resume.getDescription());
         resResumeDto.setStatus(resume.getStatus());
         resResumeDto.setJobTitle(resume.getJobTitle());
+        resResumeDto.setReward(resume.getReward());
         resResumeDto.setCreatedAt(resume.getCreatedAt());
         resResumeDto.setUpdatedAt(resume.getUpdatedAt());
         resResumeDto.setCreatedBy(resume.getCreatedBy());

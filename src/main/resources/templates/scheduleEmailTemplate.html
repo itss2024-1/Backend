@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Schedule Notification</title>
+</head>
+<body>
+<h3>Schedule Notification</h3>
+<p>Dear <span th:text="${name}">[Name]</span>,</p>
+<p>You have a new schedule:</p>
+<ul>
+    <li><strong>Phone:</strong> <span th:text="${phone}">[Phone]</span></li>
+    <li><strong>Description:</strong> <span th:text="${description}">[Description]</span></li>
+    <li><strong>Time:</strong> <span th:text="${time}">[Time]</span></li>
+    <li><strong>Status:</strong> <span th:text="${status}">[Status]</span></li>
+</ul>
+<p>Thank you!</p>
+</body>
+</html>

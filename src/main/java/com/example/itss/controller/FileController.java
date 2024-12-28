@@ -3,6 +3,8 @@ package com.example.itss.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -39,23 +41,26 @@ public class FileController {
     public ResponseEntity<ResUploadFileDto> upload(
             @RequestParam(name = "file", required = false) MultipartFile file,
             @RequestParam("folder") String folder
-
     ) throws URISyntaxException, IOException, StorageException {
-        // skip validate
+        // Validate file
         if (file == null || file.isEmpty()) {
             throw new StorageException("File is empty. Please upload a file.");
         }
-        String fileName = file.getOriginalFilename();
+        String originalFileName = file.getOriginalFilename();
         List<String> allowedExtensions = Arrays.asList("pdf", "jpg", "jpeg", "png", "doc", "docx");
-        boolean isValid = allowedExtensions.stream().anyMatch(item -> fileName.toLowerCase().endsWith(item));
+        boolean isValid = allowedExtensions.stream().anyMatch(item -> originalFileName.toLowerCase().endsWith(item));
 
         if (!isValid) {
-            throw new StorageException("Invalid file extension. only allows " + allowedExtensions.toString());
+            throw new StorageException("Invalid file extension. Only allows " + allowedExtensions.toString());
         }
-        // create a directory if not exist
+
+        // URL encode the file name
+        String encodedFileName = URLEncoder.encode(originalFileName, StandardCharsets.UTF_8.toString());
+
+        // Create directory if not exist
         this.fileService.createDirectory(baseURI + folder);
 
-        // store file
+        // Store file
         String uploadFile = this.fileService.store(file, folder);
 
         ResUploadFileDto res = new ResUploadFileDto(uploadFile, Instant.now());

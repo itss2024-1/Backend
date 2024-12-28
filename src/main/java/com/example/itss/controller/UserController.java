@@ -44,4 +44,9 @@ public class UserController {
     public ResponseEntity<ResponseDto<Void>> deleteUser(@PathVariable Long id) throws ValidInforException {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.userService.deleteUser(id));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseDto<ResUserDto>> getUserById(@PathVariable Long id) throws ValidInforException {
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.getUserById(id));
+    }
 }

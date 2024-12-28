@@ -4,12 +4,10 @@ import com.example.itss.util.SecurityUtil;
 import com.example.itss.util.constant.ResumeStatusEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.List;
 
 @Entity
 @Table(name = "resumes")
@@ -29,6 +27,8 @@ public class Resume {
     private ResumeStatusEnum status = ResumeStatusEnum.PUBLIC;;
 
     private String jobTitle;
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String reward;
 
     private Instant createdAt;
     private Instant updatedAt;

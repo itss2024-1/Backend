@@ -1,9 +1,7 @@
-package com.example.itss.domain.response.resume;
+package com.example.itss.domain.response.schedule;
 
-import com.example.itss.util.constant.ResumeStatusEnum;
+import com.example.itss.util.constant.ScheduleStatusEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,16 +13,17 @@ import java.time.Instant;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResResumeDto {
+public class ResScheduleDto {
     private long id;
     private String name;
-    private String images;
     private String description;
+    private String time;
+    private String phone;
+    private long inviteeId;
+    private String imageUrl;
     @JsonProperty("status")
-    private ResumeStatusEnum status;
-    private String jobTitle;
-    private String reward;
-    private UserResume user;
+    private ScheduleStatusEnum status;
+    private UserSchedule user;
 
     private Instant createdAt;
     private Instant updatedAt;
@@ -34,7 +33,7 @@ public class ResResumeDto {
     @Getter
     @Setter
     @AllArgsConstructor
-    public static class UserResume {
+    public static class UserSchedule {
         private long id;
         private String name;
     }
