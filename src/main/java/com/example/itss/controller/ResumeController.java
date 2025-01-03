@@ -35,6 +35,16 @@ public class ResumeController {
             @Filter Specification<Resume> spec,
             Pageable pageable) {
         Specification<Resume> combinedSpec = Specification.where(spec)
+                .and(resumeService.withoutUserId(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(this.resumeService.fetchAllResume(combinedSpec, pageable));
+    }
+
+    @GetMapping("/myresume")
+    public ResponseEntity<ResponseDto<ResultPaginationDto>> fetchMyResume(
+            @RequestParam(required = false) Long userId,
+            @Filter Specification<Resume> spec,
+            Pageable pageable) {
+        Specification<Resume> combinedSpec = Specification.where(spec)
                 .and(resumeService.withUserId(userId));
         return ResponseEntity.status(HttpStatus.OK).body(this.resumeService.fetchAllResume(combinedSpec, pageable));
     }

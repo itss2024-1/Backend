@@ -1,5 +1,6 @@
 package com.example.itss.service;
 
+import com.example.itss.domain.Email;
 import com.example.itss.domain.Schedule;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -32,19 +33,19 @@ public class EmailService {
     }
 
 
-    public void sendScheduleEmail(Schedule schedule) throws MessagingException {
+    public void sendScheduleEmail(Email email) throws MessagingException {
         Context context = new Context();
-        context.setVariable("name", schedule.getName());
-        context.setVariable("phone", schedule.getPhone());
-        context.setVariable("description", schedule.getDescription());
-        context.setVariable("time", schedule.getTime());
-        context.setVariable("status", schedule.getStatus());
+        context.setVariable("name", email.getName());
+        context.setVariable("phone", email.getPhone());
+        context.setVariable("description", email.getDescription());
+        context.setVariable("time", email.getTime());
+        context.setVariable("status", "PENDING");
 
         String process = templateEngine.process("scheduleEmailTemplate", context);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-        helper.setTo("nguyendung30021109@gmail.com");
+        helper.setTo(email.getEmail());
         helper.setSubject("Schedule Notification");
         helper.setText(process, true);
 

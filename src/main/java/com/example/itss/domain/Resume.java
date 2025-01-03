@@ -30,6 +30,8 @@ public class Resume {
     @Column(columnDefinition = "MEDIUMTEXT")
     private String reward;
 
+    private int rating = 5;
+
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;

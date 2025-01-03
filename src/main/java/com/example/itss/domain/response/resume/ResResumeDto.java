@@ -24,6 +24,7 @@ public class ResResumeDto {
     private ResumeStatusEnum status;
     private String jobTitle;
     private String reward;
+    private int rating;
     private UserResume user;
 
     private Instant createdAt;

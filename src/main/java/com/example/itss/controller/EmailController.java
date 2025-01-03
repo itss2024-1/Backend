@@ -1,5 +1,6 @@
 package com.example.itss.controller;
 
+import com.example.itss.domain.Email;
 import com.example.itss.domain.Schedule;
 import com.example.itss.service.EmailService;
 import jakarta.mail.MessagingException;
@@ -20,10 +21,10 @@ public class EmailController {
         return "Email sent successfully";
     }
 
-    @GetMapping("/schedule")
-    public String sendScheduleEmail( @RequestBody Schedule schedule) {
+    @PostMapping("/schedule")
+    public String sendScheduleEmail( @RequestBody Email email) {
         try {
-            emailService.sendScheduleEmail(schedule);
+            emailService.sendScheduleEmail(email);
             return "Email sent successfully";
         } catch (MessagingException e) {
             return "Failed to send email: " + e.getMessage();

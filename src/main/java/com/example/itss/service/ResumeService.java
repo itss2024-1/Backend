@@ -65,6 +65,15 @@ public class ResumeService {
         };
     }
 
+    public static Specification<Resume> withoutUserId(Long userId) {
+        return (root, query, criteriaBuilder) -> {
+            if (userId == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.notEqual(root.get("user").get("id"), userId);
+        };
+    }
+
     public ResponseDto<ResultPaginationDto> fetchAllResume(Specification<Resume> spec, Pageable pageable) {
         Page<Resume> pageResume = this.resumeRepository.findAll(spec, pageable);
         ResultPaginationDto rs = new ResultPaginationDto();
@@ -138,6 +147,7 @@ public class ResumeService {
         resResumeDto.setStatus(resume.getStatus());
         resResumeDto.setJobTitle(resume.getJobTitle());
         resResumeDto.setReward(resume.getReward());
+        resResumeDto.setRating(resume.getRating());
         resResumeDto.setCreatedAt(resume.getCreatedAt());
         resResumeDto.setUpdatedAt(resume.getUpdatedAt());
         resResumeDto.setCreatedBy(resume.getCreatedBy());
